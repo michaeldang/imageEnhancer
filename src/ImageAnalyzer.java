@@ -84,10 +84,7 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         double euclideanDistance(Color c2) {
             // TODO
             // Replace this to return the distance between this color and c2.
-            int redDifference = (r - c2.r) ^ 2;
-            int greenDifference = (g - c2.g) ^ 2;
-            int blueDifference = (b -c2.b) ^ 2;
-            return Math.sqrt((double) (redDifference + greenDifference + blueDifference));
+            return Math.sqrt((double) (Math.pow(r - c2.r, 2) + Math.pow(g - c2.g, 2) + Math.pow(b - c2.b, 2)));
         }
     }
 
@@ -610,7 +607,26 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
     public void encodeFast() {  
         // TODO
         // Add your code here to determine the encoded pixel values and store them in the array encodedPixels (second method, using sortedBlocks and/or javaHashMap again).
+        Color[][] currPixels = storeCurrPixels(biWorking);
 
+        encodedPixels = new int[h][w];
+        int palLength = palette.length;
+        for (int row = 0; row < h; row++) {
+            for (int col = 0; col < w; col++) {
+                Color currPixel = currPixels[row][col];
+                int red = currPixel.r * palLength + palLength / 2;
+                int green = currPixel.g * palLength + palLength / 2;
+                int blue = currPixel.b * palLength + palLength /2;
+                Color repColor = new Color(red, green, blue);
+                int indexWithClosestColor = 0;
+                double closestColorDistance = repColor.euclideanDistance(palette[0]);
+                for (int colorIndex = 1; colorIndex < palLength; colorIndex++) {
+                    indexWithClosestColor = colorIndex;
+                    closestColorDistance = repColor.euclideanDistance(palette[colorIndex]);
+                }
+
+            }
+        }
     }
 
     public void decode() {
@@ -619,7 +635,12 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         // Add your code here to determine RGB values for each pixel from the encoded information, and
         // put the RGB information into biWorking.
         // Use the putPixel function defined below to store a color into a pixel
-
+        for (int row = 0; row < h; row++) {
+            for (int col = 0; col < w; col++) {
+                Color currColor = palette[encodedPixels[row][col]];
+                putPixel(biWorking, col, row, currColor);
+            }
+        }
         double averageEncodingError = computeError(originalPixels, biWorking);
     }
 
@@ -681,6 +702,7 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         String stringToBeHashed = "" + b.getRed() + b.getGreen() + b.getBlue();
         return stringToBeHashed.hashCode();
     }
+
     private void enableEncodeMenuItems() {
         encodeFItem.setEnabled(true);
         encodeSSItem.setEnabled(true);
