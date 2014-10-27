@@ -84,7 +84,10 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         double euclideanDistance(Color c2) {
             // TODO
             // Replace this to return the distance between this color and c2.
-            return Math.sqrt((double) (Math.pow(r - c2.r, 2) + Math.pow(g - c2.g, 2) + Math.pow(b - c2.b, 2)));
+            int redDiff = r - c2.r;
+            int greenDiff = g - c2.g;
+            int blueDiff = b - c2.b;
+            return Math.sqrt((double)(redDiff * redDiff + greenDiff * greenDiff + blueDiff * blueDiff));
         }
     }
 
@@ -126,12 +129,10 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         }
 
         public boolean equals(Object givenObject) {
-            if (givenObject == null || givenObject.getClass() != getClass()) {
-                return false;
-            }
-            return (green == ((Block)givenObject).getGreen() &&
-                    red == ((Block)givenObject).getRed() &&
-                    blue == ((Block)givenObject).getBlue());
+            return givenObject != null && givenObject.getClass() == getClass()
+                   && green == ((Block)givenObject).getGreen()
+                   && red == ((Block)givenObject).getRed()
+                   && blue == ((Block)givenObject).getBlue();
         }
     }
 
@@ -554,9 +555,9 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
                 Block currBlock = new Block(currPixel.r / blockSize, currPixel.g / blockSize, currPixel.b / blockSize);
                 if (javaHashMap.containsKey(currBlock)) {
                     int lastValue = javaHashMap.get(currBlock).intValue();
-                    javaHashMap.put(currBlock, new Integer(lastValue + 1));
+                    javaHashMap.put(currBlock, Integer.valueOf(lastValue + 1));
                 } else {
-                    javaHashMap.put(currBlock, new Integer(1));
+                    javaHashMap.put(currBlock, Integer.valueOf(1));
                 }
             }
         }
@@ -637,11 +638,11 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         // Use the putPixel function defined below to store a color into a pixel
         for (int row = 0; row < h; row++) {
             for (int col = 0; col < w; col++) {
-                Color currColor = palette[encodedPixels[row][col]];
-                putPixel(biWorking, col, row, currColor);
+                putPixel(biWorking, col, row, palette[encodedPixels[row][col]]);
             }
         }
         double averageEncodingError = computeError(originalPixels, biWorking);
+        System.out.println("Average encoding error:" + averageEncodingError);
     }
 
     // Returns an array of Colors based on the pixels from a BufferedImage
