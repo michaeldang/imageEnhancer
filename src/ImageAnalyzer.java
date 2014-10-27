@@ -84,7 +84,10 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         double euclideanDistance(Color c2) {
             // TODO
             // Replace this to return the distance between this color and c2.
-            return 0.0;
+            int redDifference = (r - c2.r) ^ 2;
+            int greenDifference = (g - c2.g) ^ 2;
+            int blueDifference = (b -c2.b) ^ 2;
+            return Math.sqrt((double) (redDifference + greenDifference + blueDifference));
         }
     }
 
@@ -473,6 +476,26 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         blockSize = bs;
         // TODO
         // Add code to update the menu item states appropriately.
+        if (palette != null) {
+            buildPalette(palette.length);
+        }
+        switch (bs) {
+            case 4:
+                selectBItem4.setSelected(true);
+                selectBItem8.setSelected(false);
+                selectBItem16.setSelected(false);
+                break;
+            case 8:
+                selectBItem8.setSelected(true);
+                selectBItem4.setSelected(false);
+                selectBItem16.setSelected(false);
+                break;
+            case 16:
+                selectBItem16.setSelected(true);
+                selectBItem4.setSelected(false);
+                selectBItem8.setSelected(false);
+                break;
+        }
     }
 
     public void buildPalette(int paletteSize) {
@@ -519,11 +542,29 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
     public void encodeSlowAndSimple() {
         // TODO
         // Add your code here to determine the encoded pixel values and store them in the array encodedPixels (first method).
+        Color[][] currPixels = storeCurrPixels(biWorking);
+        encodedPixels = new int[w][h];
+        for (int row = 0; row < w; row++) {
+            for (int col = 0; col < h; col++) {
+                Color currPixel = currPixels[row][col];
+                int indexWithClosestColor = 0;
+                double closestColorDistance = currPixel.euclideanDistance(palette[0]);
+                for (int colorIndex = 1; colorIndex < palette.length; colorIndex++) {
+                    double colorDist = currPixel.euclideanDistance(palette[colorIndex]);
+                    if (colorDist < closestColorDistance) {
+                        indexWithClosestColor = colorIndex;
+                        closestColorDistance = colorDist;
+                    }
+                }
+                encodedPixels[row][col] = indexWithClosestColor;
+            }
+        }
     }
 
     public void encodeFast() {  
         // TODO
         // Add your code here to determine the encoded pixel values and store them in the array encodedPixels (second method, using sortedBlocks and/or javaHashMap again).
+
     }
 
     public void decode() {
