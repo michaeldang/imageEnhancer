@@ -547,7 +547,6 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         // Add your code here to create a palette using the Popularity Algorithm.
         // You may use the sort function defined below to help sort a HashMap<Block, Integer>.
         // Comment each step.
-        palette = new Color[paletteSize];
         javaHashMap = new HashMap<Block, Integer>();
         Color[][] imagePixels = storeCurrPixels(biWorking);
         for (Color[] pixelRow: imagePixels) {
@@ -562,7 +561,12 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
             }
         }
         sortedBlocks = sort(javaHashMap);
-        for (int index = 0; index < paletteSize; index++) {
+        if (sortedBlocks.size() < paletteSize) {
+            palette = new Color[sortedBlocks.size()];
+        } else {
+            palette = new Color[paletteSize];
+        }
+        for (int index = 0; index < palette.length; index++) {
             Block currBlock = sortedBlocks.get(index);
             palette[index] = new Color(currBlock.getRed() * blockSize, currBlock.getGreen() * blockSize,
                                        currBlock.getBlue() * blockSize);
