@@ -93,6 +93,25 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         // Implement your block methods here.  hashCode is done for you, but you still need to write
         // the bodies for h1, h2, and h3 near the end of this file.
         // Include necessary fields, constructor and remember to override the equals and toString methods.
+        private int red, green, blue;
+
+        public Block (int red, int green, int blue) {
+            this.red = red;
+            this.green = green;
+            this.blue = blue;
+        }
+
+        public int getRed() {
+            return red;
+        }
+
+        public int getGreen() {
+            return green;
+        }
+
+        public int getBlue() {
+            return blue;
+        }
 
         public int hashCode() {
             if (hashFunctionChoice == 1) {
@@ -104,6 +123,14 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
             } else {
                 return -1; // This should never happen.
             }
+        }
+        public boolean equals(Object givenObject) {
+            if (givenObject == null || givenObject.getClass() != getClass()) {
+                return false;
+            }
+            return (green == ((Block)givenObject).getGreen() &&
+                    red == ((Block)givenObject).getRed() &&
+                    blue == ((Block)givenObject).getBlue());
         }
     }
 
@@ -359,10 +386,10 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
 
     void handlePaletteMenu(JMenuItem mi){
         System.out.println("A palette menu item was selected.");
-        if (mi==createPItem2) { } // TODO Call your method here.
-        else if (mi==createPItem4) { } // TODO Call your method here.
-        else if (mi==createPItem16) { } // TODO Call your method here.
-        else if (mi==createPItem256) { } // TODO Call your method here.
+        if (mi==createPItem2) { buildPalette(2); } // TODO Call your method here.
+        else if (mi==createPItem4) { buildPalette(4); } // TODO Call your method here.
+        else if (mi==createPItem16) { buildPalette(16); } // TODO Call your method here.
+        else if (mi==createPItem256) { buildPalette(256) ;} // TODO Call your method here.
         else if (mi==selectBItem4) { setBlockSize(4); }
         else if (mi==selectBItem8) { setBlockSize(8); }
         else if (mi==selectBItem16) { setBlockSize(16); }
@@ -453,11 +480,31 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         // Add your code here to create a palette using the Popularity Algorithm.
         // You may use the sort function defined below to help sort a HashMap<Block, Integer>.
         // Comment each step.
+        palette = new Color[paletteSize];
+        javaHashMap = new HashMap<Block, Integer>();
+        Color[][] imagePixels = storeCurrPixels(biWorking);
+        for (Color[] pixelRow: imagePixels) {
+            for (Color currPixel: pixelRow) {
+                Block currBlock = new Block(currPixel.r / blockSize, currPixel.b / blockSize, currPixel.g / blockSize);
+                if (javaHashMap.containsKey(currBlock)) {
+                    int lastValue = javaHashMap.get(currBlock).intValue();
+                    javaHashMap.put(currBlock, new Integer(lastValue + 1));
+                } else {
+                    javaHashMap.put(currBlock, new Integer(1));
+                }
+            }
+        }
+        sortedBlocks = sort(javaHashMap);
+        for (int index = 0; index < paletteSize; index++) {
+            Block currBlock = sortedBlocks.get(index);
+            System.out.println(currBlock);
+            palette[index] = new Color(currBlock.getRed(), currBlock.getGreen(), currBlock.getBlue());
+        }
     }
 
     // returns a sorted(largest weight to smallest weight) ArrayList of the blocks in HashMap<Block, Integer>
     ArrayList<Block> sort(final HashMap<Block, Integer> map) {
-        ArrayList<Block> arr = new ArrayList<>();
+        ArrayList<Block> arr = new ArrayList<Block>();
         for (Block b : map.keySet()) {
             arr.add(b);
         }
@@ -532,19 +579,20 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
     public int h1(Block b) {
         // TODO
         // Replace this with your code
-        return 0;
+        return b.getRed() ^ b.getGreen() ^ b.getBlue();
     }
 
     public int h2(Block b) {
         // TODO
         // Replace this with your code
-        return 0;
+        return 1024 * b.getRed() + 32 * b.getGreen() + b.getBlue();
     }
 
     public int h3(Block b) {
         // TODO
         // Replace this with your code
-        return 0;
+        String stringToBeHash = "" + b.getRed() + b.getGreen() + b.getBlue();
+        return stringToBeHash.hashCode();
     }
 
     /* This main method can be used to run the application. */
