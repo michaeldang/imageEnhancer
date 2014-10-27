@@ -547,6 +547,7 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         // Add your code here to create a palette using the Popularity Algorithm.
         // You may use the sort function defined below to help sort a HashMap<Block, Integer>.
         // Comment each step.
+        long startTime = System.nanoTime();
         javaHashMap = new HashMap<Block, Integer>();
         Color[][] imagePixels = storeCurrPixels(biWorking);
         for (Color[] pixelRow: imagePixels) {
@@ -554,7 +555,7 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
                 Block currBlock = new Block(currPixel.r / blockSize, currPixel.g / blockSize, currPixel.b / blockSize);
                 if (javaHashMap.containsKey(currBlock)) {
                     int lastValue = javaHashMap.get(currBlock).intValue();
-                    javaHashMap.put(currBlock, Integer.valueOf(lastValue + 1));
+                    javaHashMap.put(currBlock, new Integer(lastValue + 1));
                 } else {
                     javaHashMap.put(currBlock, Integer.valueOf(1));
                 }
@@ -571,6 +572,9 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
             palette[index] = new Color(currBlock.getRed() * blockSize, currBlock.getGreen() * blockSize,
                                        currBlock.getBlue() * blockSize);
         }
+
+        long endTime = System.nanoTime();
+        System.out.println("Time taken to build table (in ms): " + (endTime - startTime) / 1000000);
     }
 
     // returns a sorted(largest weight to smallest weight) ArrayList of the blocks in HashMap<Block, Integer>
@@ -645,6 +649,7 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
                 putPixel(biWorking, col, row, palette[encodedPixels[row][col]]);
             }
         }
+        repaint();
         double averageEncodingError = computeError(originalPixels, biWorking);
         System.out.println("Average encoding error:" + averageEncodingError);
     }
@@ -724,6 +729,14 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         encodeFItem.setEnabled(false);
         encodeSSItem.setEnabled(false);
         decodeItem.setEnabled(false);
+    }
+
+    private void printStats() {
+        System.out.println("Current Hashing Function: " + hashFunctionChoice);
+        System.out.println("Number of pixels in image: " + w * h);
+        System.out.println("Number of distinct keys: " + javaHashMap.size());
+        System.out.println("Capacity of hash table: " + javaHashMap.size());
+        System.out.println("Capacity of hash table: " + javaHashMap.size());
     }
 
     /* This main method can be used to run the application. */
