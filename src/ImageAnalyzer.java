@@ -616,7 +616,7 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
                 Color currPixel = currPixels[row][col];
                 int red = currPixel.r * palLength + palLength / 2;
                 int green = currPixel.g * palLength + palLength / 2;
-                int blue = currPixel.b * palLength + palLength /2;
+                int blue = currPixel.b * palLength + palLength / 2;
                 Color repColor = new Color(red, green, blue);
                 int indexWithClosestColor = 0;
                 double closestColorDistance = repColor.euclideanDistance(palette[0]);
