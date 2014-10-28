@@ -594,6 +594,7 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
     public void encodeSlowAndSimple() {
         // TODO
         // Add your code here to determine the encoded pixel values and store them in the array encodedPixels (first method).
+        long startTime = System.nanoTime();
         Color[][] currPixels = storeCurrPixels(biWorking);
         encodedPixels = new int[h][w];
         for (int row = 0; row < h; row++) {
@@ -611,6 +612,8 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
                 encodedPixels[row][col] = indexWithClosestColor;
             }
         }
+        long endTime = System.nanoTime();
+        System.out.print("Time taken to encode: " + (endTime - startTime) / 1000000);
     }
 
     public void encodeFast() {  
@@ -638,7 +641,7 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
             }
         }
         long endTime = System.nanoTime();
-        System.out.print("Time taken to build encode: " + (endTime - startTime));
+        System.out.print("Time taken to encode: " + (endTime - startTime));
     }
 
     public void decode() {
