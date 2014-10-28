@@ -45,7 +45,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class ImageAnalyzer extends JFrame implements ActionListener {
     public static ImageAnalyzer appInstance; // Used in main().
 
-    String startingImage = "q3image.png";
+    String startingImage = "UW-Campus-1961.jpg";
     BufferedImage biTemp, biWorking, biFiltered; // These hold arrays of pixels.
     Graphics gOrig, gWorking; // Used to access the drawImage method.
     int w; // width of the current image.
@@ -575,11 +575,11 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
             palette[index] = new Color(currBlock.getRed() * blockSize + halfBlockSize,
                                        currBlock.getGreen() * blockSize + halfBlockSize,
                                        currBlock.getBlue() * blockSize + halfBlockSize);
-            System.out.println(palette[index].r + ", " + palette[index].g + ", " + palette[index].b);
         }
         long timeTaken = (System.nanoTime() - startTime) / 1000000;
         timeElapsedInMS = timeTaken;
         System.out.println("Time taken to build table (in ms): " + timeTaken);
+        printStats();
     }
 
     // returns a sorted(largest weight to smallest weight) ArrayList of the blocks in HashMap<Block, Integer>
@@ -603,7 +603,6 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         Color[][] currPixels = storeCurrPixels(biWorking);
         encodedPixels = new int[h][w];
         for (int row = 0; row < h; row++) {
-            System.out.print("palette row: ");
             for (int col = 0; col < w; col++) {
                 Color currPixel = currPixels[row][col];
                 int indexWithClosestColor = 0;
@@ -616,13 +615,12 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
                     }
                 }
                 encodedPixels[row][col] = indexWithClosestColor;
-                System.out.print(indexWithClosestColor + " ");
             }
-            System.out.println("");
         }
         long timeTaken = (System.nanoTime() - startTime) / 1000000;
-        timeElapsedInMS += timeTaken ;
+        timeElapsedInMS += timeTaken;
         System.out.println("Time taken to encode: " + timeTaken);
+        printStats();
     }
 
     public void encodeFast() {  
@@ -652,6 +650,7 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         long timeTaken = (System.nanoTime() - startTime) / 1000000;
         timeElapsedInMS += timeTaken;
         System.out.println("Time taken to encode: " + timeTaken);
+        printStats();
     }
 
     public void decode() {
@@ -671,7 +670,7 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         System.out.println("Average encoding error:" + averageEncodingError);
         long timeTaken = (System.nanoTime() - startTime) / 1000000;
         timeElapsedInMS += timeTaken;
-        printStatsForFunction();
+        printStatsForFinishedImage();
         timeElapsedInMS = 0;
     }
 
@@ -758,8 +757,12 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         System.out.println("Number of distinct keys: " + javaHashMap.size());
     }
 
-    private void printStatsForFunction() {
+    private void printStatsForFinishedImage() {
         System.out.println("Total time elapsed: " + timeElapsedInMS);
+        int bitCountForPalette = Integer.bitCount(palette.length);
+        int bitsForCompressedImage = bitCountForPalette * w * h  + 24 * palette.length;
+        int bitsForOriginalImage = 24 * w * h;
+        System.out.println("Compression Ratio: " + ((double) bitsForOriginalImage) / bitsForCompressedImage);
     }
 
     /* This main method can be used to run the application. */
