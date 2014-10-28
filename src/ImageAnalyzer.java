@@ -555,7 +555,7 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
                 Block currBlock = new Block(currPixel.r / blockSize, currPixel.g / blockSize, currPixel.b / blockSize);
                 if (javaHashMap.containsKey(currBlock)) {
                     int lastValue = javaHashMap.get(currBlock).intValue();
-                    javaHashMap.put(currBlock, new Integer(lastValue + 1));
+                    javaHashMap.put(currBlock, Integer.valueOf(lastValue + 1));
                 } else {
                     javaHashMap.put(currBlock, Integer.valueOf(1));
                 }
@@ -616,6 +616,7 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
     public void encodeFast() {  
         // TODO
         // Add your code here to determine the encoded pixel values and store them in the array encodedPixels (second method, using sortedBlocks and/or javaHashMap again).
+        long startTime = System.nanoTime();
         Color[][] currPixels = storeCurrPixels(biWorking);
 
         encodedPixels = new int[h][w];
@@ -636,6 +637,8 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
 
             }
         }
+        long endTime = System.nanoTime();
+        System.out.print("Time taken to build encode: " + (endTime - startTime));
     }
 
     public void decode() {
