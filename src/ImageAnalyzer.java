@@ -45,7 +45,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class ImageAnalyzer extends JFrame implements ActionListener {
     public static ImageAnalyzer appInstance; // Used in main().
 
-    String startingImage = "UW-Campus-1961.jpg";
+    String startingImage = "q3image.png";
     BufferedImage biTemp, biWorking, biFiltered; // These hold arrays of pixels.
     Graphics gOrig, gWorking; // Used to access the drawImage method.
     int w; // width of the current image.
@@ -571,8 +571,11 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         }
         for (int index = 0; index < palette.length; index++) {
             Block currBlock = sortedBlocks.get(index);
-            palette[index] = new Color(currBlock.getRed() * blockSize, currBlock.getGreen() * blockSize,
-                                       currBlock.getBlue() * blockSize);
+            int halfBlockSize = blockSize / 2;
+            palette[index] = new Color(currBlock.getRed() * blockSize + halfBlockSize,
+                                       currBlock.getGreen() * blockSize + halfBlockSize,
+                                       currBlock.getBlue() * blockSize + halfBlockSize);
+            System.out.println(palette[index].r + ", " + palette[index].g + ", " + palette[index].b);
         }
         long timeTaken = (System.nanoTime() - startTime) / 1000000;
         timeElapsedInMS = timeTaken;
@@ -600,6 +603,7 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         Color[][] currPixels = storeCurrPixels(biWorking);
         encodedPixels = new int[h][w];
         for (int row = 0; row < h; row++) {
+            System.out.print("palette row: ");
             for (int col = 0; col < w; col++) {
                 Color currPixel = currPixels[row][col];
                 int indexWithClosestColor = 0;
@@ -612,7 +616,9 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
                     }
                 }
                 encodedPixels[row][col] = indexWithClosestColor;
+                System.out.print(indexWithClosestColor + " ");
             }
+            System.out.println("");
         }
         long timeTaken = (System.nanoTime() - startTime) / 1000000;
         timeElapsedInMS += timeTaken ;
@@ -750,8 +756,6 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         System.out.println("Current Hashing Function: " + hashFunctionChoice);
         System.out.println("Number of pixels in image: " + w * h);
         System.out.println("Number of distinct keys: " + javaHashMap.size());
-        System.out.println("Capacity of hash table: " + javaHashMap.size());
-        System.out.println("Capacity of hash table: " + javaHashMap.size());
     }
 
     private void printStatsForFunction() {
