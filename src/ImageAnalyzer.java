@@ -59,6 +59,7 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
     public ArrayList<Block> sortedBlocks; // to store sorted blocks(list L)
     public Color[] palette;	// stores the first U elements of list L
     public int[][] encodedPixels;	// to store the value each pixel in the image is encoded to
+    long timeElapsedInMS;
 
     JPanel viewPanel; // Where the image will be painted.
     JPopupMenu popup;
@@ -547,6 +548,7 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         // Add your code here to create a palette using the Popularity Algorithm.
         // You may use the sort function defined below to help sort a HashMap<Block, Integer>.
         // Comment each step.
+        timeElapsedInMS = 0;
         long startTime = System.nanoTime();
         javaHashMap = new HashMap<Block, Integer>();
         Color[][] imagePixels = storeCurrPixels(biWorking);
@@ -572,9 +574,9 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
             palette[index] = new Color(currBlock.getRed() * blockSize, currBlock.getGreen() * blockSize,
                                        currBlock.getBlue() * blockSize);
         }
-
-        long endTime = System.nanoTime();
-        System.out.println("Time taken to build table (in ms): " + (endTime - startTime) / 1000000);
+        long timeTaken = (System.nanoTime() - startTime) / 1000000;
+        timeElapsedInMS = timeTaken;
+        System.out.println("Time taken to build table (in ms): " + timeTaken);
     }
 
     // returns a sorted(largest weight to smallest weight) ArrayList of the blocks in HashMap<Block, Integer>
@@ -612,8 +614,9 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
                 encodedPixels[row][col] = indexWithClosestColor;
             }
         }
-        long endTime = System.nanoTime();
-        System.out.print("Time taken to encode: " + (endTime - startTime) / 1000000);
+        long timeTaken = (System.nanoTime() - startTime) / 1000000;
+        timeElapsedInMS += timeTaken ;
+        System.out.println("Time taken to encode: " + timeTaken);
     }
 
     public void encodeFast() {  
@@ -640,11 +643,13 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
 
             }
         }
-        long endTime = System.nanoTime();
-        System.out.print("Time taken to encode: " + (endTime - startTime));
+        long timeTaken = (System.nanoTime() - startTime) / 1000000;
+        timeElapsedInMS += timeTaken;
+        System.out.println("Time taken to encode: " + timeTaken);
     }
 
     public void decode() {
+        long startTime = System.nanoTime();
         Color[][] originalPixels = storeCurrPixels(biWorking);
         // TODO
         // Add your code here to determine RGB values for each pixel from the encoded information, and
@@ -658,6 +663,10 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         repaint();
         double averageEncodingError = computeError(originalPixels, biWorking);
         System.out.println("Average encoding error:" + averageEncodingError);
+        long timeTaken = (System.nanoTime() - startTime) / 1000000;
+        timeElapsedInMS += timeTaken;
+        printStatsForFunction();
+        timeElapsedInMS = 0;
     }
 
     // Returns an array of Colors based on the pixels from a BufferedImage
@@ -743,6 +752,10 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         System.out.println("Number of distinct keys: " + javaHashMap.size());
         System.out.println("Capacity of hash table: " + javaHashMap.size());
         System.out.println("Capacity of hash table: " + javaHashMap.size());
+    }
+
+    private void printStatsForFunction() {
+        System.out.println("Total time elapsed: " + timeElapsedInMS);
     }
 
     /* This main method can be used to run the application. */
