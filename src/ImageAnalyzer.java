@@ -485,7 +485,6 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         if (mi==hashFunctionItem1) { setHashFunctionChoice(1); }
         else if (mi==hashFunctionItem2) { setHashFunctionChoice(2); }
         else if (mi==hashFunctionItem3) { setHashFunctionChoice(3); }
-        disableEncodeDecodeMenuItems();
     }
 
     void handleHelpMenu(JMenuItem mi){
@@ -563,6 +562,7 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
                 hashFunctionItem2.setSelected(false);
                 break;
         }
+        disableEncodeDecodeMenuItems();
     }
 
     public void setBlockSize(int bs) {
@@ -780,22 +780,21 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         bi.setRGB(x,  y, rgb);
     }
 
-    //Computes the block's hashcode using the exclusive or operation on the object's red, green, and blue values.
+    //Computes the block's hashcode using the instructor's instructions for h1.
     public int h1(Block b) {
         // TODO
         // Replace this with your code
         return b.getRed() ^ b.getGreen() ^ b.getBlue();
     }
 
-    //Computes the block's hashcode by mathematically manipulating the block's red, green, and blue values.
+    //Computes the block's hashcode using the instructor's instructions for h2.
     public int h2(Block b) {
         // TODO
         // Replace this with your code
         return 1024 * b.getRed() + 32 * b.getGreen() + b.getBlue();
     }
 
-    //Computes the block's hashcode by concatenating the values of the block's red, green, and blue values into a string
-    //and using the String class's hashcode method on it.
+    //Computes the block's hashcode using the instructor's instruction for h3.
     public int h3(Block b) {
         // TODO
         // Replace this with your code

@@ -25,9 +25,9 @@ of 256 and a block sizze of 4x4x4, the encode time is lower for the
 slow method. I believe this is because the slow method does less object creation (merely puts primitive ints into an array)
 as it does not create new Integer objects to  replace the integer values (the javaHashMap stores the integer values as Integer objects)
 in the javaHashMap in order to replace the weight values in the javaHashMap with the palette index of the representative
-colors for each pixel. I believe the performance drag for the increased number of mathematical operations for calculating
-euclidean distance in the slow method is outweighted by the performance loss when creating new
-Integer objects to put into the javaHashMap in the fast method.
+colors for each pixel. I believe the performance drag for the increased number of mathematical operations (just simple multiplication
+instead of using Math.pow) for calculating euclidean distance in the slow method is outweighted by the performance loss
+when creating new Integer objects to put into the javaHashMap in the fast method.
 
 4)
 The value of the compression ratio of that the viewer considers slightly noticeable varies based upon the viewer. The
