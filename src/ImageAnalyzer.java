@@ -612,7 +612,7 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
                 }
             }
         }
-        sortedBlocks = sort(javaHashMap); //sorts the populated hash map
+        sortedBlocks = sort(javaHashMap); //sorts the populated hash map by weight
         if (sortedBlocks.size() < paletteSize) { //checks if the number of unique blocks is less than the given palette size
             palette = new Color[sortedBlocks.size()]; //creates a palette with a size equivalent to the number of different blocks
         } else {
