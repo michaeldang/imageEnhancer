@@ -762,7 +762,7 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
     private void printStats() {
         System.out.println("Current Hashing Function: " + hashFunctionChoice);
         System.out.println("Number of pixels in image: " + w * h);
-        System.out.println("Number of distinct keys: " + javaHashMap.size());
+        System.out.println("Number of distinct bins: " + javaHashMap.size());
     }
 
     private void printStatsForFinishedImage() {
