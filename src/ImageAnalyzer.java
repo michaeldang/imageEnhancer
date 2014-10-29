@@ -485,6 +485,7 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         if (mi==hashFunctionItem1) { setHashFunctionChoice(1); }
         else if (mi==hashFunctionItem2) { setHashFunctionChoice(2); }
         else if (mi==hashFunctionItem3) { setHashFunctionChoice(3); }
+        disableEncodeDecodeMenuItems();
     }
 
     void handleHelpMenu(JMenuItem mi){
