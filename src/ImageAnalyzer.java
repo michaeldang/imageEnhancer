@@ -660,14 +660,14 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
                 int indexWithClosestColor = 0;
                 double closestColorDistance = currentPixel.euclideanDistance(palette[0]);
                 for (int colorIndex = 1; colorIndex < palette.length; colorIndex++) {
-                    double colorDist = currentPixel.euclideanDistance(palette[colorIndex]);
-                    if (colorDist < closestColorDistance) {
+                    double colorDist = currentPixel.euclideanDistance(palette[colorIndex]); //Calulates distance between current pixel and current palette color
+                    if (colorDist < closestColorDistance) { //checks if the current color distance is the closest
                         indexWithClosestColor = colorIndex;
                         closestColorDistance = colorDist;
                     }
                 }
-                encodedPixels[row][col] = indexWithClosestColor;
-            }
+                encodedPixels[row][col] = indexWithClosestColor; //sets the current pixel's spot in the encoded pixel array to the index of the color in
+            } //the palette with the color closest to the current pixel.
         }
         long timeTaken = (System.nanoTime() - startTime) / 1000000;
         timeElapsedInMS += timeTaken;
@@ -683,7 +683,7 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         // Add your code here to determine the encoded pixel values and store them in the array encodedPixels (second method, using sortedBlocks and/or javaHashMap again).
         long startTime = System.nanoTime();
         Set<Block> blocksInHash= javaHashMap.keySet();
-        for(Block colorBlock: blocksInHash) {
+        for(Block colorBlock: blocksInHash) { //Replaces the weight for each block in the javaHashMap with the index of the closest palette color
             int halfBlockSize = blockSize / 2;
             Color representativeColor = new Color(colorBlock.getRed() * blockSize + halfBlockSize,
                     colorBlock.getGreen() * blockSize + halfBlockSize,
@@ -700,12 +700,12 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
             javaHashMap.put(colorBlock, Integer.valueOf(closestColorIndex));
         }
         Color[][] currentPixels = storeCurrPixels(biWorking);
-        encodedPixels = new int[h][w];
-        for (int row = 0; row < h; row ++) {
+        encodedPixels = new int[h][w]; //Stores the indices of the palette colors that are closest to each of the pixels
+        for (int row = 0; row < h; row ++) { //
             for (int col = 0; col < w; col++) {
                 Color currentPixel = currentPixels[row][col];
                 Block currentPixelBlock = new Block(currentPixel.r / blockSize, currentPixel.g / blockSize, currentPixel.b / blockSize);
-                encodedPixels[row][col] = javaHashMap.get(currentPixelBlock);
+                encodedPixels[row][col] = javaHashMap.get(currentPixelBlock); //finds the index in the palette of the closest color for the pixel
             }
         }
         long endTime = System.nanoTime();
