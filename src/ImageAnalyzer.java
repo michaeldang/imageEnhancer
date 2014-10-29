@@ -1,7 +1,10 @@
 /*
  * ImageAnalyzer.java
- * Starter code for A3 // Change this line to "A3 Solution by " + YOUR_NAME and UWNetID.
- * 
+ * A3 Solution by Michael Dang, mwldang@uw.edu.
+ *
+ * The ImageAnalyzer is used for editing images as well as producing compressed images.
+ * The ImageAnalyzer produces two methods for processing images: a fast method and a slower, simpler one.
+ *
  * 
  * See also the file CustomHashtable.java for use in the extra credit options.
  * CSE 373, University of Washington, Autumn 2014.
@@ -83,6 +86,11 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
             this.r = r; this.g = g; this.b = b;    		
         }
 
+        /**
+         * Calculates the Euclidean distance between the given Color and the Color from which the method is called
+         * @param c2 The color which you want to calculate the Euclidean distance from
+         * @return A double containing the Euclidean distance between the given Color and the Color from which the method is called
+         */
         double euclideanDistance(Color c2) {
             // TODO
             // Replace this to return the distance between this color and c2.
@@ -100,24 +108,46 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         // Include necessary fields, constructor and remember to override the equals and toString methods.
         private int red, green, blue;
 
+        /**
+         * Creates a Block with the given red, green, and blue values
+         * @param red The given red value as an integer
+         * @param green The given green value as an integer
+         * @param blue The given blue value as an integer
+         */
         public Block (int red, int green, int blue) {
             this.red = red;
             this.green = green;
             this.blue = blue;
         }
 
+        /**
+         * Returns the block's red value
+         * @return The block's red value as an integer.
+         */
         public int getRed() {
             return red;
         }
 
+        /**
+         * Returns the block's green value
+         * @return The block's green value as an integer.
+         */
         public int getGreen() {
             return green;
         }
 
+        /**
+         * Returns the block's blue value
+         * @return The block's blue value as an integer
+         */
         public int getBlue() {
             return blue;
         }
 
+        /**
+         * Creates a hash code for the given block
+         * @return An int containing the calculated hash code
+         */
         public int hashCode() {
             if (hashFunctionChoice == 1) {
                 return h1(this);
@@ -130,11 +160,24 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
             }
         }
 
+        /**
+         * Determines whether the given object is equal to the Block that this method is being called from
+         * @param givenObject The object that the current Block is being compared to
+         * @return True if the given object is the same as the Block that this mtehod is called from
+         */
         public boolean equals(Object givenObject) {
             return givenObject != null && givenObject.getClass() == getClass()
                    && green == ((Block)givenObject).getGreen()
                    && red == ((Block)givenObject).getRed()
                    && blue == ((Block)givenObject).getBlue();
+        }
+
+        /**
+         * Produces a string describing the current Block
+         * @return A string describing the current Block
+         */
+        public String toString() {
+            return "Block: red = " + red + ", green = " + green + ", blue = " + blue;
         }
     }
 
@@ -544,43 +587,47 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Creates a palette of the given palette size using the most popular colors in the image
+     * @param paletteSize The given palette size
+     */
     public void buildPalette(int paletteSize) {
         // TODO
         // Add your code here to create a palette using the Popularity Algorithm.
         // You may use the sort function defined below to help sort a HashMap<Block, Integer>.
         // Comment each step.
-        timeElapsedInMS = 0;
-        long startTime = System.nanoTime();
-        javaHashMap = new HashMap<Block, Integer>();
-        Color[][] imagePixels = storeCurrPixels(biWorking);
-        for (Color[] pixelRow: imagePixels) {
-            for (Color currPixel: pixelRow) {
-                Block currBlock = new Block(currPixel.r / blockSize, currPixel.g / blockSize, currPixel.b / blockSize);
-                if (javaHashMap.containsKey(currBlock)) {
-                    int lastValue = javaHashMap.get(currBlock).intValue();
-                    javaHashMap.put(currBlock, Integer.valueOf(lastValue + 1));
+        timeElapsedInMS = 0; //resets the total time elapsed to 0
+        long startTime = System.nanoTime(); //starts recording the time for the build palette task
+        javaHashMap = new HashMap<Block, Integer>(); //resets the javaHashMap to an empty hash map.
+        Color[][] imagePixels = storeCurrPixels(biWorking); //saves the pixels of the current image
+        for (Color[] pixelRow: imagePixels) { //increments through each row of pixels
+            for (Color currPixel: pixelRow) { //increments through each pixel in the row
+                Block currBlock = new Block(currPixel.r / blockSize, currPixel.g / blockSize, currPixel.b / blockSize); //creates a block for the current pixel
+                if (javaHashMap.containsKey(currBlock)) { //checks if the current block is in the hash map
+                    int lastValue = javaHashMap.get(currBlock).intValue(); //gets the current weight of the current block in the hash map
+                    javaHashMap.put(currBlock, Integer.valueOf(lastValue + 1)); //increments the weight by 1 and puts it into the hash map
                 } else {
-                    javaHashMap.put(currBlock, Integer.valueOf(1));
+                    javaHashMap.put(currBlock, Integer.valueOf(1)); //if it's not in the hash map, it adds a weight of 1 for the current block
                 }
             }
         }
-        sortedBlocks = sort(javaHashMap);
-        if (sortedBlocks.size() < paletteSize) {
-            palette = new Color[sortedBlocks.size()];
+        sortedBlocks = sort(javaHashMap); //sorts the populated hash map
+        if (sortedBlocks.size() < paletteSize) { //checks if the number of unique blocks is less than the given palette size
+            palette = new Color[sortedBlocks.size()]; //creates a palette with a size equivalent to the number of different blocks
         } else {
-            palette = new Color[paletteSize];
+            palette = new Color[paletteSize]; //creates a palette using the given palette size if there are enough colors available
         }
-        for (int index = 0; index < palette.length; index++) {
-            Block currBlock = sortedBlocks.get(index);
-            int halfBlockSize = blockSize / 2;
-            palette[index] = new Color(currBlock.getRed() * blockSize + halfBlockSize,
-                                       currBlock.getGreen() * blockSize + halfBlockSize,
+        for (int index = 0; index < palette.length; index++) { //increments through the slots in the palette
+            Block currBlock = sortedBlocks.get(index); //gets the block at the current index
+            int halfBlockSize = blockSize / 2; //calculates half of the block size
+            palette[index] = new Color(currBlock.getRed() * blockSize + halfBlockSize, //adds and calculates
+                                       currBlock.getGreen() * blockSize + halfBlockSize, //the representative color for the current block
                                        currBlock.getBlue() * blockSize + halfBlockSize);
         }
-        long timeTaken = (System.nanoTime() - startTime) / 1000000;
-        timeElapsedInMS = timeTaken;
-        System.out.println("Time taken to build table (in ms): " + timeTaken);
-        printStats();
+        long timeTaken = (System.nanoTime() - startTime) / 1000000; //calculates the time it took to build the palette
+        timeElapsedInMS = timeTaken; //adds the time taken to the total elapsed time
+        System.out.println("Time taken to build table (in ms): " + timeTaken); //prints out the time taken to build the palette
+        printStats(); //prints out relevant stats
     }
 
     // returns a sorted(largest weight to smallest weight) ArrayList of the blocks in HashMap<Block, Integer>
@@ -597,6 +644,9 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         return arr;
     }
 
+    /**
+     * Encodes the displayed image using a slow and simple process.
+     */
     public void encodeSlowAndSimple() {
         // TODO
         // Add your code here to determine the encoded pixel values and store them in the array encodedPixels (first method).
@@ -624,6 +674,9 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         printStats();
     }
 
+    /**
+     * Encodes the displayed image using a faster method.
+     */
     public void encodeFast() {  
         // TODO
         // Add your code here to determine the encoded pixel values and store them in the array encodedPixels (second method, using sortedBlocks and/or javaHashMap again).
@@ -661,6 +714,10 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         printStats();
     }
 
+    /**
+     * Decodes the current encoded image and displays it on the screen
+     * Prints out relevant statistics after the decoding process is finished
+     */
     public void decode() {
         long startTime = System.nanoTime();
         Color[][] originalPixels = storeCurrPixels(biWorking);
@@ -722,18 +779,22 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         bi.setRGB(x,  y, rgb);
     }
 
+    //Computes the block's hashcode using the exclusive or operation on the object's red, green, and blue values.
     public int h1(Block b) {
         // TODO
         // Replace this with your code
         return b.getRed() ^ b.getGreen() ^ b.getBlue();
     }
 
+    //Computes the block's hashcode by mathematically manipulating the block's red, green, and blue values.
     public int h2(Block b) {
         // TODO
         // Replace this with your code
         return 1024 * b.getRed() + 32 * b.getGreen() + b.getBlue();
     }
 
+    //Computes the block's hashcode by concatenating the values of the block's red, green, and blue values into a string
+    //and using the String class's hashcode method on it.
     public int h3(Block b) {
         // TODO
         // Replace this with your code
@@ -741,30 +802,35 @@ public class ImageAnalyzer extends JFrame implements ActionListener {
         return stringToBeHashed.hashCode();
     }
 
+    //Enables encoding menu items and disables the decoding menu item
     private void enableEncodeMenuItems() {
         encodeFItem.setEnabled(true);
         encodeSSItem.setEnabled(true);
         decodeItem.setEnabled(false);
     }
 
+    //Disables encoding menu items and enables the decoding menu item
     private void disableEncodeMenuItems() {
         encodeFItem.setEnabled(false);
         encodeSSItem.setEnabled(false);
         decodeItem.setEnabled(true);
     }
 
+    //Disables the encoding and decoding menu items.
     private void disableEncodeDecodeMenuItems() {
         encodeFItem.setEnabled(false);
         encodeSSItem.setEnabled(false);
         decodeItem.setEnabled(false);
     }
 
+    //Helper method for printing out stats relevant to the hashing
     private void printStats() {
         System.out.println("Current Hashing Function: " + hashFunctionChoice);
         System.out.println("Number of pixels in image: " + w * h);
         System.out.println("Number of distinct bins: " + javaHashMap.size());
     }
 
+    //Helper method for printing out stats relevant to when the image is decoded
     private void printStatsForFinishedImage() {
         System.out.println("Total time elapsed: " + timeElapsedInMS);
         int bitCountForPalette = Integer.bitCount(palette.length);
