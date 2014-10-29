@@ -3,7 +3,7 @@
  * A3 Solution by Michael Dang, mwldang@uw.edu.
  *
  * The ImageAnalyzer is used for editing images as well as producing compressed images.
- * The ImageAnalyzer produces two methods for processing images: a fast method and a slower, simpler one.
+ * The ImageAnalyzer provides two methods for processing images: a fast method and a slower, simpler one.
  *
  * 
  * See also the file CustomHashtable.java for use in the extra credit options.
